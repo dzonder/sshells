@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Windows PowerShell",
+        "path": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    {
+        "name": "Command Prompt",
+        "path": "%SystemRoot%\\System32\\cmd.exe"
+    },
+    {
+        "name": "PowerShell",
+        "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+    },
+    {
+        "name": "Git Bash",
+        "path": "C:\\Program Files\\Git\\bin\\bash.exe"
+    }
+]

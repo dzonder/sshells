@@ -1,0 +1,18 @@
+[package]
+name = "sshells"
+version = "0.1.1"
+edition = "2021"
+description = "Simple utility for picking OpenSSH shell on Windows after establishing SSH connection"
+homepage = "https://github.com/dzonder/sshells"
+repository = "https://github.com/dzonder/sshells"
+readme = "README.md"
+keywords = ["openssh", "shell", "windows"]
+authors = ["Michal Olech <me@dzonder.net>"]
+categories = ["ssh", "tools"]
+license = "MIT"
+
+[dependencies]
+lazy_static = "1.5.0"
+regex = "1.10.6"
+serde = { version = "1.0.206", features = ["derive"] }
+serde_json = "1.0.124"
