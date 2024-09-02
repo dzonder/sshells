@@ -1,3 +1,5 @@
+use cursive::align::HAlign;
+use cursive::views::{Dialog, LinearLayout, SelectView, TextView};
 use lazy_static::lazy_static;
 use regex::*;
 use serde::Deserialize;
@@ -5,7 +7,6 @@ use std::borrow::Cow;
 use std::env;
 use std::fs;
 use std::fs::File;
-use std::io::{self, Write};
 use std::path::Path;
 use std::process::Command;
 
@@ -13,13 +14,16 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const PROGRAM_DATA: &str = "%SystemDrive%\\ProgramData\\dzonder\\SSHells";
 const CONFIG: &str = "config.json";
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 struct Sshell {
     name: String,
     path: String,
 
     #[serde(default)]
     args: Vec<String>,
+
+    #[serde(skip)]
+    expanded_path: String,
 }
 
 /// Expand environmental variables (e.g. `%SystemRoot%`) in a path string.
@@ -32,47 +36,11 @@ fn expand_env_vars(path: &str) -> Cow<str> {
     })
 }
 
-/// Print an invalid choice message.
-fn invalid_choice(sshells: &Vec<Sshell>) {
-    eprintln!("Choose a shell from 1 to {}", sshells.len());
-}
-
-/// Print shell selection prompt and parse the input.
-fn choose_sshell(sshells: &Vec<Sshell>) {
-    print!("\nYour choice: ");
-    io::stdout().flush().unwrap();
-    let mut choice = String::new();
-    io::stdin()
-        .read_line(&mut choice)
-        .expect("failed to read from stdin");
-    match choice.trim().parse::<usize>() {
-        Ok(i) => run_sshell(sshells, i),
-        Err(..) => invalid_choice(sshells),
-    };
-}
-
-/// List shells and loop the prompt until a valid selection.
-fn list_sshells(sshells: &Vec<Sshell>) {
-    println!("Please choose your shell:\n");
-    for (i, sshell) in sshells.iter().enumerate() {
-        println!("{}) {}", i + 1, sshell.name);
-    }
-    loop {
-        choose_sshell(&sshells);
-    }
-}
-
-/// Run the selected shell (index `i` from configuration).
-fn run_sshell(sshells: &Vec<Sshell>, i: usize) {
-    if i < 1 || i > sshells.len() {
-        invalid_choice(sshells);
-        return;
-    }
-    let sshell = &sshells[i - 1];
-    // Clear the terminal screen and move cursor.
-    print!("\x1B[2J\x1B[1;1H");
-    let path: String = expand_env_vars(sshell.path.as_str()).into();
-    Command::new(path)
+/// Run the selected shell.
+fn run_sshell(sshell: &Sshell) {
+    // Reset colors, clear the terminal screen and move cursor.
+    print!("\x1B[0m\x1B[2J\x1B[1;1H");
+    Command::new(&sshell.expanded_path)
         .args(&sshell.args)
         .spawn()
         .expect("shell failed to start");
@@ -93,7 +61,30 @@ fn read_config() -> Vec<Sshell> {
     return serde_json::from_reader(cfg).expect("failed to parse config file");
 }
 
+/// Create a SelectView with the list of shells.
+fn sshells_select(sshells: &Vec<Sshell>) -> SelectView<Sshell> {
+    let mut select_view = SelectView::new();
+    for sshell in sshells {
+        let mut sshell_clone = (*sshell).clone();
+        sshell_clone.expanded_path = expand_env_vars(sshell.path.as_str()).into();
+        if Path::new(&sshell_clone.expanded_path).exists() {
+            select_view.add_item(sshell.name.clone(), sshell_clone);
+        }
+    }
+    select_view.set_on_submit(|_, sshell| {
+        run_sshell(sshell);
+    });
+    return select_view;
+}
+
 fn main() {
-    println!("SSHells {VERSION}\n");
-    list_sshells(&read_config());
+    let sshells = read_config();
+    let mut siv = cursive::default();
+    siv.add_global_callback('q', |s| s.quit());
+    siv.add_layer(
+        LinearLayout::vertical()
+            .child(TextView::new(format!("SSHells {VERSION}")).h_align(HAlign::Center))
+            .child(Dialog::around(sshells_select(&sshells))),
+    );
+    siv.run();
 }
