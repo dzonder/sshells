@@ -37,7 +37,7 @@ To change the default shells edit `config.json`:
 
 ```PowerShell
 # Edit the config.json using notepad.
-notepad $env:SystemDrive\ProgramData\dzonder\SSHells\config.json
+notepad $env:ProgramData\dzonder\SSHells\config.json
 ```
 
 See [src/config.json](src/config.json) for an example. Default configuration will be written upon first run of `sshells.exe`.
