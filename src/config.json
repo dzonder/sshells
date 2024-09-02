@@ -9,10 +9,15 @@
     },
     {
         "name": "PowerShell",
-        "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+        "path": "%ProgramFiles%\\PowerShell\\7\\pwsh.exe"
     },
     {
         "name": "Git Bash",
-        "path": "C:\\Program Files\\Git\\bin\\bash.exe"
+        "path": "%ProgramFiles%\\Git\\bin\\bash.exe"
+    },
+    {
+        "name": "MSYS2 (UCRT64)",
+        "path": "%SystemDrive%\\msys64\\msys2_shell.cmd",
+        "args": [ "-defterm", "-here", "-no-start", "-ucrt64" ]
     }
 ]

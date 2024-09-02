@@ -17,6 +17,9 @@ const CONFIG: &str = "config.json";
 struct Sshell {
     name: String,
     path: String,
+
+    #[serde(default)]
+    args: Vec<String>,
 }
 
 /// Expand environmental variables (e.g. `%SystemRoot%`) in a path string.
@@ -65,10 +68,14 @@ fn run_sshell(sshells: &Vec<Sshell>, i: usize) {
         invalid_choice(sshells);
         return;
     }
+    let sshell = &sshells[i - 1];
     // Clear the terminal screen and move cursor.
     print!("\x1B[2J\x1B[1;1H");
-    let path: String = expand_env_vars(sshells[i - 1].path.as_str()).into();
-    Command::new(path).spawn().expect("shell failed to start");
+    let path: String = expand_env_vars(sshell.path.as_str()).into();
+    Command::new(path)
+        .args(&sshell.args)
+        .spawn()
+        .expect("shell failed to start");
     std::process::exit(0);
 }
 
