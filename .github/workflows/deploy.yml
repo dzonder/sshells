@@ -11,6 +11,7 @@ permissions:
 jobs:
   build-and-upload:
     name: Build and upload
+    environment: production
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -55,3 +56,11 @@ jobs:
         with:
           files: |
             ${{ env.ASSET }}
+
+      - name: Publish to Winget
+        uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: dzonder.sshells
+          max-versions-to-keep: 5
+          token: ${{ secrets.WINGET_TOKEN }}
+          installers-regex: '\.zip$'
