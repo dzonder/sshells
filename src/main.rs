@@ -39,7 +39,7 @@ fn expand_env_vars(path: &str) -> Cow<str> {
 /// Run the selected shell.
 fn run_sshell(sshell: &Sshell) {
     // Reset colors, clear the terminal screen and move cursor.
-    print!("\x1B[0m\x1B[2J\x1B[1;1H");
+    print!("\x1B[0m\x1B[?25h\x1B[2J\x1B[1;1H");
     Command::new(&sshell.expanded_path)
         .args(&sshell.args)
         .spawn()
