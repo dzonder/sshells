@@ -58,7 +58,7 @@ fn read_config() -> Vec<Sshell> {
         fs::write(&cfg_path, include_str!("config.json")).expect("failed to write default config");
     }
     let cfg = File::open(cfg_path).expect("failed to open config file");
-    return serde_json::from_reader(cfg).expect("failed to parse config file");
+    serde_json::from_reader(cfg).expect("failed to parse config file")
 }
 
 /// Create a SelectView with the list of shells.
@@ -74,7 +74,7 @@ fn sshells_select(sshells: &Vec<Sshell>) -> SelectView<Sshell> {
     select_view.set_on_submit(|_, sshell| {
         run_sshell(sshell);
     });
-    return select_view;
+    select_view
 }
 
 fn main() {
