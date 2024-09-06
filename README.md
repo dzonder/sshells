@@ -10,7 +10,7 @@ Simple utility that can be used as a default OpenSSH shell that lets you pick th
 
 ### Windows 
 
-Install:
+Install (execute in elevated PowerShell):
 
 ```PowerShell
 # Install using WinGet (Windows Package Manager).
@@ -21,7 +21,7 @@ winget install dzonder.sshells
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value (Get-Command sshells.exe).Path -PropertyType String -Force
 ```
 
-Uninstall:
+Uninstall (execute in elevated PowerShell):
 
 ```PowerShell
 # Uninstall using WinGet (Windows Package Manager).
