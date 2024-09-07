@@ -1,6 +1,6 @@
 [package]
 name = "sshells"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "Simple utility for picking OpenSSH shell on Windows after establishing SSH connection"
 homepage = "https://github.com/dzonder/sshells"
