@@ -69,7 +69,7 @@ fn read_config() -> Vec<Sshell> {
 
 /// Create a SelectView with the list of shells.
 fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
-    let mut select_view = SelectView::new();
+    let mut select_view = SelectView::new().autojump();
     for sshell in sshells {
         // Skip shells that don't exist.
         if Path::new(&sshell.expanded_path).exists() {
