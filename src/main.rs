@@ -1,3 +1,5 @@
+//! Simple utility for picking OpenSSH shell on Windows after establishing SSH connection.
+
 use cursive::align::HAlign;
 use cursive::views::{Dialog, LinearLayout, SelectView, TextView};
 use lazy_static::lazy_static;
