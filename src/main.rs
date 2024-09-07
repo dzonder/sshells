@@ -1,6 +1,9 @@
 //! Simple utility for picking OpenSSH shell on Windows after establishing SSH connection.
 
 use cursive::align::HAlign;
+use cursive::style::gradient::Linear;
+use cursive::style::Rgb;
+use cursive::utils::markup::gradient;
 use cursive::views::{Dialog, LinearLayout, SelectView, TextView};
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
@@ -98,11 +101,15 @@ fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
 /// Reads the configuration and sets up the select view in a TUI.
 fn main() {
     let sshells = read_config();
+    let version_text = gradient::decorate_back(
+        format!("SSHells {VERSION}"),
+        Linear::simple(Rgb::yellow(), Rgb::cyan()),
+    );
     let mut siv = cursive::default();
     siv.add_global_callback('q', |s| s.quit());
     siv.add_layer(
         LinearLayout::vertical()
-            .child(TextView::new(format!("SSHells {VERSION}")).h_align(HAlign::Center))
+            .child(TextView::new(version_text).h_align(HAlign::Center))
             .child(Dialog::around(sshells_select(sshells))),
     );
     siv.run();
