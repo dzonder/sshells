@@ -1,7 +1,7 @@
 use cursive::align::HAlign;
 use cursive::views::{Dialog, LinearLayout, SelectView, TextView};
 use lazy_static::lazy_static;
-use regex::*;
+use regex::{Captures, Regex};
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::env;
