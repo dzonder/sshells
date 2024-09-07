@@ -20,7 +20,7 @@ const PROGRAM_DATA: &str = "%SystemDrive%\\ProgramData\\dzonder\\SSHells";
 const CONFIG: &str = "config.json";
 
 /// Stores information about a shell (e.g. its name and how it should be executed).
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 struct Sshell {
     name: String,
     path: String,
