@@ -10,10 +10,16 @@ use std::fs::File;
 use std::path::Path;
 use std::process::Command;
 
+/// Version of the sshells package (for informative purposes).
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// Path to the directory where configuration is stored.
 const PROGRAM_DATA: &str = "%SystemDrive%\\ProgramData\\dzonder\\SSHells";
+
+/// Base name of the configuration file.
 const CONFIG: &str = "config.json";
 
+/// Stores information about a shell (e.g. its name and how it should be executed).
 #[derive(Debug, Deserialize)]
 struct Sshell {
     name: String,
