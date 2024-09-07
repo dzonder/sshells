@@ -43,6 +43,11 @@ impl Sshell {
             .expect("shell failed to start");
         std::process::exit(0);
     }
+
+    /// Checks if this shell exists in the system.
+    fn exists(&self) -> bool {
+        Path::new(&self.expanded_path).exists()
+    }
 }
 
 /// Expand environmental variables (e.g. `%SystemRoot%`) in a path string.
@@ -75,12 +80,11 @@ fn read_config() -> Vec<Sshell> {
     sshells
 }
 
-/// Create a SelectView with the list of shells.
+/// Create a SelectView with the list of (existing) shells.
 fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
     let mut select_view = SelectView::new().autojump();
     for sshell in sshells {
-        // Skip shells that don't exist.
-        if Path::new(&sshell.expanded_path).exists() {
+        if sshell.exists() {
             select_view.add_item(sshell.name.clone(), sshell);
         }
     }
