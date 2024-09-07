@@ -95,6 +95,7 @@ fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
     })
 }
 
+/// Reads the configuration and sets up the select view in a TUI.
 fn main() {
     let sshells = read_config();
     let mut siv = cursive::default();
