@@ -18,7 +18,7 @@ winget install dzonder.sshells
 
 # Set the default shell in OpenSSH.
 # https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_server_configuration#configuring-the-default-shell-for-openssh-in-windows
-New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value (Get-Command sshells.exe).Path -PropertyType String -Force
+New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "$env:LOCALAPPDATA\Microsoft\WinGet\Links\sshells.exe" -PropertyType String -Force
 ```
 
 Uninstall (execute in elevated PowerShell):
