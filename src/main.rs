@@ -14,7 +14,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const PROGRAM_DATA: &str = "%SystemDrive%\\ProgramData\\dzonder\\SSHells";
 const CONFIG: &str = "config.json";
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Deserialize)]
 struct Sshell {
     name: String,
     path: String,
@@ -58,23 +58,27 @@ fn read_config() -> Vec<Sshell> {
         fs::write(&cfg_path, include_str!("config.json")).expect("failed to write default config");
     }
     let cfg = File::open(cfg_path).expect("failed to open config file");
-    serde_json::from_reader(cfg).expect("failed to parse config file")
+    let mut sshells: Vec<Sshell> =
+        serde_json::from_reader(cfg).expect("failed to parse config file");
+    // Expand environmental variables in all paths.
+    for sshell in sshells.iter_mut() {
+        sshell.expanded_path = expand_env_vars(&sshell.path).into();
+    }
+    sshells
 }
 
 /// Create a SelectView with the list of shells.
-fn sshells_select(sshells: &Vec<Sshell>) -> SelectView<Sshell> {
+fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
     let mut select_view = SelectView::new();
     for sshell in sshells {
-        let mut sshell_clone = (*sshell).clone();
-        sshell_clone.expanded_path = expand_env_vars(sshell.path.as_str()).into();
-        if Path::new(&sshell_clone.expanded_path).exists() {
-            select_view.add_item(sshell.name.clone(), sshell_clone);
+        // Skip shells that don't exist.
+        if Path::new(&sshell.expanded_path).exists() {
+            select_view.add_item(sshell.name.clone(), sshell);
         }
     }
-    select_view.set_on_submit(|_, sshell| {
+    select_view.on_submit(|_, sshell| {
         run_sshell(sshell);
-    });
-    select_view
+    })
 }
 
 fn main() {
@@ -84,7 +88,7 @@ fn main() {
     siv.add_layer(
         LinearLayout::vertical()
             .child(TextView::new(format!("SSHells {VERSION}")).h_align(HAlign::Center))
-            .child(Dialog::around(sshells_select(&sshells))),
+            .child(Dialog::around(sshells_select(sshells))),
     );
     siv.run();
 }
