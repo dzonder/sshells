@@ -32,6 +32,19 @@ struct Sshell {
     expanded_path: String,
 }
 
+impl Sshell {
+    /// Run the selected shell. Exits after shell terminates.
+    fn run(&self) {
+        // Reset colors, clear the terminal screen and move cursor.
+        print!("\x1B[0m\x1B[?25h\x1B[2J\x1B[1;1H");
+        Command::new(&self.expanded_path)
+            .args(&self.args)
+            .spawn()
+            .expect("shell failed to start");
+        std::process::exit(0);
+    }
+}
+
 /// Expand environmental variables (e.g. `%SystemRoot%`) in a path string.
 fn expand_env_vars(path: &str) -> Cow<str> {
     lazy_static! {
@@ -40,17 +53,6 @@ fn expand_env_vars(path: &str) -> Cow<str> {
     ENV_VAR_REGEX.replace_all(path, |c: &Captures| {
         env::var(&c[1]).expect("invalid environmental variable")
     })
-}
-
-/// Run the selected shell.
-fn run_sshell(sshell: &Sshell) {
-    // Reset colors, clear the terminal screen and move cursor.
-    print!("\x1B[0m\x1B[?25h\x1B[2J\x1B[1;1H");
-    Command::new(&sshell.expanded_path)
-        .args(&sshell.args)
-        .spawn()
-        .expect("shell failed to start");
-    std::process::exit(0);
 }
 
 /// Read and parse list of shells from a configuration file.
@@ -83,7 +85,7 @@ fn sshells_select(sshells: Vec<Sshell>) -> SelectView<Sshell> {
         }
     }
     select_view.on_submit(|_, sshell| {
-        run_sshell(sshell);
+        sshell.run();
     })
 }
 
